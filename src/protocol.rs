@@ -52,14 +52,14 @@ impl<'a> Command<'a> {
     pub fn as_bytes(&self) -> String<U128> {
         match self {
             Command::QueryFirmwareInfo => String::from("AT+GMR"),
-            Command::QueryIpAddress => String::from("AT+CIPSTA_CUR?"),
+            Command::QueryIpAddress => String::from("AT+CIPSTA?"),
             Command::SetMode(mode)=> match mode {
-                WiFiMode::Station => String::from("AT+CWMODE_CUR=1"),
-                WiFiMode::SoftAccessPoint => String::from("AT+CWMODE_CUR=2"),
-                WiFiMode::SoftAccessPointAndStation => String::from("AT+CWMODE_CUR=3"),
+                WiFiMode::Station => String::from("AT+CWMODE=1"),
+                WiFiMode::SoftAccessPoint => String::from("AT+CWMODE=2"),
+                WiFiMode::SoftAccessPointAndStation => String::from("AT+CWMODE=3"),
             }
             Command::JoinAp { ssid, password } => {
-                let mut s = String::from("AT+CWJAP_CUR=\"");
+                let mut s = String::from("AT+CWJAP=\"");
                 s.push_str(ssid).unwrap();
                 s.push_str("\",\"").unwrap();
                 s.push_str(password).unwrap();
@@ -112,10 +112,10 @@ impl<'a> Command<'a> {
                 s
             }
             Command::QueryDnsResolvers => {
-                String::from("AT+CIPDNS_CUR?")
+                String::from("AT+CIPDNS?")
             }
             Command::SetDnsResolvers(addr) => {
-                let mut s = String::from("AT+CIPDNS_CUR=1,");
+                let mut s = String::from("AT+CIPDNS=1,");
                 write!(s, "\"{}\"", addr.resolver1).unwrap();
                 if let Some(resolver2) = addr.resolver2 {
                     write!(s, ",\"{}\"", resolver2 ).unwrap()

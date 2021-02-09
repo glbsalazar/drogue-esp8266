@@ -183,15 +183,15 @@ named!(
 named!(
     pub ip_addresses<Response>,
     do_parse!(
-        tag!("+CIPSTA_CUR:ip:\"") >>
+        tag!("+CIPSTA:ip:\"") >>
         ip: ip_addr >>
         tag!("\"") >>
         crlf >>
-        tag!("+CIPSTA_CUR:gateway:\"") >>
+        tag!("+CIPSTA:gateway:\"") >>
         gateway: ip_addr >>
         tag!("\"") >>
         crlf >>
-        tag!("+CIPSTA_CUR:netmask:\"") >>
+        tag!("+CIPSTA:netmask:\"") >>
         netmask: ip_addr >>
         tag!("\"") >>
         crlf >>
@@ -226,7 +226,8 @@ named!(
 named!(
     pub ready_for_data<Response>,
     do_parse!(
-        tag!("> ") >>
+        opt!(crlf) >>
+        tag!(">") >>
         (
             Response::ReadyForData
         )
@@ -304,9 +305,9 @@ named!(
     do_parse!(
         opt!(tag!("\r")) >>
         opt!(tag!("\n")) >>
-        tag!("+CIPRECVDATA,") >>
+        tag!("+CIPRECVDATA:") >>
         len: parse_usize >>
-        char!(':') >>
+        char!(',') >>
         data: take!(len) >>
         crlf >>
         ok >>
@@ -325,11 +326,11 @@ named!(
 named!(
     pub dns_resolvers<Response>,
     do_parse!(
-        tag!("+CIPDNS_CUR:") >>
+        tag!("+CIPDNS:") >>
         ns1: ip_addr >> crlf >>
         ns2: opt!(
             do_parse!(
-                tag!("+CIPDNS_CUR:") >>
+                tag!("+CIPDNS:") >>
                 ns2: ip_addr >> crlf >>
                 (
                     ns2
